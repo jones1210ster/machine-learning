@@ -1,0 +1,24 @@
+import pandas as pd
+import numpy as np
+from sklearn.feature_selection import SelectFromModel, SelectKBest, f_regression, f_classif
+
+path = r'C:\Users\anton\for Anton\anton\anton_ml\TPL1.xlsx'
+df=pd.read_excel(path,'DataBase_3')
+df.fillna(0)
+
+X=df.iloc[:,:-1]
+y=df.iloc[:,-1:]
+column_names = df.iloc[:,:-1].columns
+
+k=6
+fs = SelectKBest(f_classif, k=k)
+X_selected = fs.fit_transform(X, y)
+X_selected.shape
+top_features = sorted(zip(column_names, fs.scores_, fs.pvalues_),key=lambda x: x[1], reverse=True) 
+print(top_features[:k])
+
+df=pd.DataFrame(top_features,columns=['Factor','Statistics','p-value']) 
+df['Statistics']=df['Statistics'].astype(float).map("{:.3}".format)
+df['p-value']=df['p-value'].astype(float).map("{:.2}".format)
+
+df
